@@ -4,9 +4,10 @@
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License MIT](https://img.shields.io/badge/license-MIT-green)
 
-**Send one message to a list of your Telegram chats.** tgcast is a mailing tool for chats: you give it a list of
-channels and groups and a text, and it posts that text to each of them from your Telegram account, one by one - with
-safe pauses and limits, and never twice to the same chat.
+**Mailing to your base of Telegram chats.** You keep a base (a simple list) of your channels and groups in a text file,
+write one message, and tgcast posts it to every chat in the base from your Telegram account, one by one - with safe
+pauses and limits, and never twice to the same chat. The base can be as long as you like; it is worked through over
+several runs.
 
 Typical uses: announcing an event, a release or an offer in all the communities you run; posting the same update to
 several groups you manage; sharing news with partner chats that agreed to receive it.
@@ -109,9 +110,10 @@ message, and a run sends to at most 20 chats:
 `tgcast send` shows the estimate before it asks for confirmation. Keep the window open while it runs; Ctrl+C stops it
 cleanly and everything already sent stays recorded.
 
-## A long list of chats
+## A big base of chats
 
-A run sends to at most `max_per_run` chats (20 by default); the rest waits. Simply run `tgcast send` again later: chats
+The base is the `targets.txt` file: one chat per line, as many lines as you need. A run sends to at most `max_per_run`
+chats (20 by default); the rest of the base waits. Simply run `tgcast send` again later: chats
 that already got the message are skipped, and the next ones are taken.
 
 **Important for a one-time announcement:** the "never twice" protection lasts `cooldown_hours` (24 by default). If your
