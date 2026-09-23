@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0
+
+- Ready-made `tgcast.exe` for Windows (no Python needed), built by GitHub Actions and published in Releases with a checksum.
+- Running `tgcast` without arguments opens a simple menu (setup, check, preview, send, history).
+- Clear messages for a wrong api_id/api_hash, phone number, login code and two-step password.
+- Fix: closing the connection after a failed login no longer raises an error.
+
 ## 1.0.0
 
 First public release.

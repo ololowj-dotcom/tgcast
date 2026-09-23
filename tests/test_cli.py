@@ -338,3 +338,58 @@ def test_prompt_without_a_terminal_cancels_instead_of_crashing(project, gateway,
                           uniform=lambda low, high: low)
     assert main(["send", *cfg_arg(project)], runtime_obj) == 1
     assert gateway.sent == [] and "Cancelled" in rec.text
+
+
+def menu_runtime(gateway, rec):
+    return runtime(gateway, rec)
+
+
+def test_menu_runs_the_chosen_action_and_returns_to_the_menu(project, gateway, rec, monkeypatch):
+    from tgcast.cli import run_menu
+
+    monkeypatch.chdir(project)
+    ready(gateway)
+    rec.answers = ["3", "", "5", "", "0"]
+    assert run_menu(menu_runtime(gateway, rec)) == 0
+    assert rec.text.count("tgcast - mailing to your base of Telegram chats") == 3
+    assert "Dry run: nothing was sent." in rec.text and "No runs yet." in rec.text
+    assert gateway.sent == []
+
+
+def test_menu_send_asks_for_confirmation(project, gateway, rec, monkeypatch):
+    from tgcast.cli import run_menu
+
+    monkeypatch.chdir(project)
+    ready(gateway)
+    rec.answers = ["4", "y", "", "0"]
+    run_menu(menu_runtime(gateway, rec))
+    assert len(gateway.sent) == 3
+
+
+def test_menu_rejects_unknown_choices_and_exits_on_end_of_input(gateway, rec):
+    from tgcast.cli import run_menu
+
+    rec.answers = ["9", "hello"]
+    assert run_menu(menu_runtime(gateway, rec)) == 0
+    assert rec.text.count("Please type one of the numbers") == 2
+
+
+def test_menu_survives_a_broken_setup(tmp_path, gateway, rec, monkeypatch):
+    from tgcast.cli import run_menu
+
+    monkeypatch.chdir(tmp_path)
+    gateway.authorized = False
+    gateway.login_error = Fatal("bad code")
+    rec.answers = ["1", "1", "hash", "+1", "", "0"]
+    assert run_menu(menu_runtime(gateway, rec)) == 0
+    assert "Login failed: bad code" in rec.text
+
+
+def test_no_arguments_open_the_menu_only_in_a_terminal(gateway, rec, monkeypatch, capsys):
+    monkeypatch.setattr("tgcast.cli.interactive", lambda: True)
+    rec.answers = ["0"]
+    assert main([], runtime(gateway, rec)) == 0
+    assert "tgcast - mailing to your base" in rec.text
+    monkeypatch.setattr("tgcast.cli.interactive", lambda: False)
+    assert main([], runtime(gateway, Recorder())) == 0
+    assert "usage" in capsys.readouterr().out.lower()

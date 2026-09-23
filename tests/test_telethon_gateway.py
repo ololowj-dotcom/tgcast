@@ -165,3 +165,58 @@ def test_connect_close_and_authorization(gw):
     gw.close()
     assert not gw.client.connected
     gw.loop = __import__("asyncio").new_event_loop()
+
+
+def test_close_works_when_disconnect_returns_nothing_like_the_real_client(tmp_path):
+    gateway = TelethonGateway(1, "h", tmp_path / "s.session")
+    calls = []
+
+    class RealisticClient:
+        def disconnect(self):
+            calls.append("disconnect")
+
+    gateway.client = RealisticClient()
+    gateway.close()
+    assert calls == ["disconnect"] and gateway.loop.is_closed()
+
+
+def test_close_still_works_with_a_coroutine_disconnect(tmp_path):
+    gateway = TelethonGateway(1, "h", tmp_path / "s.session")
+    calls = []
+
+    class AsyncClient:
+        async def disconnect(self):
+            calls.append("disconnect")
+
+    gateway.client = AsyncClient()
+    gateway.close()
+    assert calls == ["disconnect"] and gateway.loop.is_closed()
+
+
+def test_close_never_raises_even_if_disconnect_fails(tmp_path):
+    gateway = TelethonGateway(1, "h", tmp_path / "s.session")
+
+    class BrokenClient:
+        def disconnect(self):
+            raise RuntimeError("boom")
+
+    gateway.client = BrokenClient()
+    gateway.close()
+    assert gateway.loop.is_closed()
+    gateway.close()
+
+
+@pytest.mark.parametrize("name,fragment", [
+    ("ApiIdInvalidError", "api_id / api_hash pair is wrong"),
+    ("PhoneNumberInvalidError", "international format"),
+    ("PhoneCodeInvalidError", "login code is wrong"),
+    ("PhoneCodeExpiredError", "expired"),
+    ("PasswordHashInvalidError", "two-step"),
+    ("PhoneNumberFloodError", "too many login attempts"),
+])
+def test_login_errors_are_explained_in_plain_language(name, fragment):
+    from tgcast.gateway import map_error
+
+    exc = getattr(errors, name)(request=None)
+    mapped = map_error(exc)
+    assert fragment in str(mapped) and "Error" not in str(mapped).split(":")[0]

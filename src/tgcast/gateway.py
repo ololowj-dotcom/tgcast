@@ -30,6 +30,19 @@ NOT_FOUND_NAMES = {
     "UsernameNotOccupiedError", "UsernameInvalidError", "PeerIdInvalidError", "InviteHashInvalidError",
     "InviteHashExpiredError",
 }
+LOGIN_TEXT = {
+    "ApiIdInvalidError": "the api_id / api_hash pair is wrong; copy both again from https://my.telegram.org",
+    "ApiIdPublishedFloodError": "this api_id was blocked by Telegram; create your own at https://my.telegram.org",
+    "PhoneNumberInvalidError": "the phone number is not valid; use the international format, for example +79001234567",
+    "PhoneNumberBannedError": "this phone number is banned by Telegram",
+    "PhoneNumberFloodError": "too many login attempts for this number; wait a while and try again",
+    "PhoneCodeInvalidError": "the login code is wrong; check the latest message from Telegram",
+    "PhoneCodeExpiredError": "the login code has expired; run setup again to get a new one",
+    "PhoneCodeEmptyError": "the login code was empty",
+    "PasswordHashInvalidError": "the two-step verification password is wrong",
+    "SendCodeUnavailableError": "Telegram cannot send a code right now; wait a while and try again",
+}
+
 FORBIDDEN_TEXT = {
     "ChatWriteForbiddenError": "you are not allowed to write in this chat",
     "UserBannedInChannelError": "your account is banned in this chat",
@@ -63,6 +76,8 @@ def map_error(exc: BaseException) -> GatewayError:
         return Fatal(f"the Telegram session is no longer valid ({name}); run `tgcast setup` again")
     if name in NOT_FOUND_NAMES:
         return NotFound("no such chat or username")
+    if name in LOGIN_TEXT:
+        return Forbidden(LOGIN_TEXT[name])
     if name in FORBIDDEN_TEXT:
         return Forbidden(FORBIDDEN_TEXT[name])
     if name in TRANSIENT_NAMES or isinstance(exc, (ConnectionError, TimeoutError, asyncio.TimeoutError, OSError)):
@@ -198,6 +213,13 @@ class TelethonGateway:
 
     def close(self) -> None:
         try:
-            self.run(self.client.disconnect())
+            result = self.client.disconnect()
+            if asyncio.iscoroutine(result) or isinstance(result, asyncio.Future):
+                self.loop.run_until_complete(result)
+        except KeyboardInterrupt:
+            raise
+        except Exception:
+            pass
         finally:
-            self.loop.close()
+            if not self.loop.is_closed():
+                self.loop.close()

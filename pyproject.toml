@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tgcast"
-version = "1.0.0"
+version = "1.1.0"
 description = "Mailing to your base of Telegram chats: post one message to every channel and group in your list, carefully - with previews, permission checks, safe pauses and limits, and no repeats."
 readme = "README.md"
 requires-python = ">=3.9"

@@ -309,6 +309,47 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+MENU = """
+tgcast - mailing to your base of Telegram chats
+Working folder: {folder}
+
+  1  First-time setup (log in and create the files)
+  2  Check which chats I can post to
+  3  Preview the mailing (nothing is sent)
+  4  Send the mailing
+  5  Show what was sent before
+  0  Exit
+"""
+
+MENU_ACTIONS = {
+    "1": ["setup"],
+    "2": ["check"],
+    "3": ["send", "--dry-run"],
+    "4": ["send"],
+    "5": ["status"],
+}
+
+
+def interactive() -> bool:
+    stdin = sys.stdin
+    return stdin is not None and stdin.isatty()
+
+
+def run_menu(rt: Runtime) -> int:
+    while True:
+        rt.say(MENU.format(folder=Path.cwd()))
+        choice = rt.ask("Type a number and press Enter: ", False).strip().lower()
+        if choice in ("", "0", "q", "exit"):
+            return 0
+        argv = MENU_ACTIONS.get(choice)
+        if argv is None:
+            rt.say("Please type one of the numbers from the list.")
+            continue
+        rt.say("")
+        main(argv, rt)
+        rt.ask("\nPress Enter to return to the menu...", False)
+
+
 def main(argv: Optional[List[str]] = None, runtime: Optional[Runtime] = None) -> int:
     for stream in (sys.stdout, sys.stderr):
         try:
@@ -321,6 +362,8 @@ def main(argv: Optional[List[str]] = None, runtime: Optional[Runtime] = None) ->
     handlers = {"setup": cmd_setup, "check": cmd_check, "send": cmd_send, "status": cmd_status}
     handler = handlers.get(args.command or "")
     if handler is None:
+        if args.command is None and interactive():
+            return run_menu(rt)
         parser.print_help()
         return 0
     try:

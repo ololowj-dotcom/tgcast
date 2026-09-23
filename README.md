@@ -49,12 +49,21 @@ identical text, especially into chats that did not ask for it.
 
 ## Install
 
+**Windows, the easy way (no Python needed):** download `tgcast-windows.zip` from the
+[latest release](https://github.com/ololowj-dotcom/tgcast/releases/latest), unpack it, put `tgcast.exe` into an empty
+folder for your mailing and **double-click it**. A menu opens: 1 setup, 2 check, 3 preview, 4 send, 5 history. Everything
+below works the same; the menu simply runs those commands for you. Windows SmartScreen may warn that the program is not
+signed: click "More info" -> "Run anyway". The file is built from this repository by GitHub Actions, and
+`SHA256SUMS.txt` lets you check it.
+
+**With Python (any system):**
+
 ```bash
 pip install git+https://github.com/ololowj-dotcom/tgcast
 ```
 
 Python 3.9 or newer. On Windows, install Python from python.org first (tick "Add to PATH"), then run the command in
-PowerShell.
+PowerShell. Running `tgcast` with no arguments opens the same menu.
 
 ## Step by step
 
