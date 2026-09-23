@@ -307,3 +307,34 @@ def test_secret_files_are_private(tmp_path, gateway, rec):
     gateway.authorized = False
     run_cli(["setup", "--dir", str(tmp_path), "--api-id", "1", "--api-hash", "h"], gateway, rec)
     assert stat.S_IMODE(os.stat(tmp_path / ".env").st_mode) == 0o600
+
+
+def test_estimate_matches_the_real_schedule(project, gateway, rec):
+    for i in range(20):
+        gateway.add(f"@chat_{i:02d}_x")
+    (project / "targets.txt").write_text("\n".join(f"@chat_{i:02d}_x" for i in range(20)), encoding="utf-8")
+    (project / "tgcast.toml").write_text(
+        '[telegram]\napi_id = "12345"\napi_hash = "abcdef"\n'
+        "[limits]\ndelay_min = 30\ndelay_max = 50\nbatch_size = 10\nbatch_pause = 300\n"
+        "max_per_run = 20\ncooldown_hours = 24\n",
+        encoding="utf-8",
+    )
+    run_cli(["send", "--dry-run", *cfg_arg(project)], gateway, rec)
+    assert "20 chat(s) will get the message, about 17 min in total." in rec.text
+
+
+def test_prompt_without_a_terminal_cancels_instead_of_crashing(project, gateway, rec, monkeypatch):
+    import builtins
+
+    from tgcast.cli import Runtime, read_answer
+
+    def no_terminal(_prompt=""):
+        raise EOFError
+
+    monkeypatch.setattr(builtins, "input", no_terminal)
+    assert read_answer("Send? ", False) == ""
+    ready(gateway)
+    runtime_obj = Runtime(factory=lambda a, b, c: gateway, say=rec.say, sleep=rec.sleep, clock=rec.clock,
+                          uniform=lambda low, high: low)
+    assert main(["send", *cfg_arg(project)], runtime_obj) == 1
+    assert gateway.sent == [] and "Cancelled" in rec.text

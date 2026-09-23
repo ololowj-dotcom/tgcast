@@ -25,11 +25,18 @@ from .templates import render, validate
 GatewayFactory = Callable[[int, str, Path], Gateway]
 
 
+def read_answer(prompt: str, secret: bool) -> str:
+    try:
+        return getpass.getpass(prompt) if secret else input(prompt)
+    except EOFError:
+        return ""
+
+
 @dataclass
 class Runtime:
     factory: GatewayFactory = TelethonGateway
     say: Callable[[str], None] = field(default=lambda text="": print(text, flush=True))
-    ask: Callable[[str, bool], str] = field(default=lambda prompt, secret: getpass.getpass(prompt) if secret else input(prompt))
+    ask: Callable[[str, bool], str] = field(default=lambda prompt, secret: read_answer(prompt, secret))
     sleep: Callable[[float], None] = time.sleep
     clock: Callable[[], float] = time.time
     uniform: Callable[[float, float], float] = random.uniform
@@ -96,10 +103,9 @@ def show_plan(plan: List[PlanItem], template: str, cfg: Config, rt: Runtime) -> 
         rt.say("  " + render(template, context_for(sends[0].resolved, rt.clock())).replace("\n", "\n  "))
         limits = cfg.limits
         average = (limits.delay_min + limits.delay_max) / 2
-        pauses = 0
-        if limits.batch_size:
-            pauses = ((len(sends) - 1) // limits.batch_size) * limits.batch_pause
-        minutes = max(0, ((len(sends) - 1) * average + pauses)) / 60
+        gaps = len(sends) - 1
+        rests = gaps // limits.batch_size if limits.batch_size else 0
+        minutes = max(0, (gaps - rests) * average + rests * limits.batch_pause) / 60
         rt.say("")
         rt.say(f"{len(sends)} chat(s) will get the message, about {minutes:.0f} min in total.")
     return len(sends)
