@@ -3,6 +3,11 @@
 [![CI](https://github.com/ololowj-dotcom/tgcast/actions/workflows/ci.yml/badge.svg)](https://github.com/ololowj-dotcom/tgcast/actions/workflows/ci.yml)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License MIT](https://img.shields.io/badge/license-MIT-green)
+[![Скачать для Windows](https://img.shields.io/badge/скачать-Windows%20.exe-0078D6?logo=windows)](https://github.com/ololowj-dotcom/tgcast/releases/latest)
+
+> **Работаете на Windows? Есть готовая программа, Python не нужен.** Скачайте
+> [`tgcast-windows.zip`](https://github.com/ololowj-dotcom/tgcast/releases/latest), распакуйте и дважды щёлкните по
+> `tgcast.exe`: меню проведёт по настройке и отправке. Подробности в разделе [Установка](#установка).
 
 **Рассылка по базе ваших Telegram-чатов.** Вы ведёте базу (простой список) своих каналов и групп в текстовом файле,
 пишете одно сообщение, а tgcast публикует его в каждый чат базы от вашего Telegram-аккаунта, по одному, с безопасными

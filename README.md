@@ -3,6 +3,11 @@
 [![CI](https://github.com/ololowj-dotcom/tgcast/actions/workflows/ci.yml/badge.svg)](https://github.com/ololowj-dotcom/tgcast/actions/workflows/ci.yml)
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License MIT](https://img.shields.io/badge/license-MIT-green)
+[![Download for Windows](https://img.shields.io/badge/download-Windows%20.exe-0078D6?logo=windows)](https://github.com/ololowj-dotcom/tgcast/releases/latest)
+
+> **On Windows? There is a ready-made program, no Python needed.** Download
+> [`tgcast-windows.zip`](https://github.com/ololowj-dotcom/tgcast/releases/latest), unpack it and double-click
+> `tgcast.exe`: a menu guides you through setup and sending. Details in [Install](#install).
 
 **Mailing to your base of Telegram chats.** You keep a base (a simple list) of your channels and groups in a text file,
 write one message, and tgcast posts it to every chat in the base from your Telegram account, one by one - with safe
