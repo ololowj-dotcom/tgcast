@@ -4,7 +4,7 @@
 
 First public release.
 
-- Announcements to your own Telegram channels and groups from your account (Telethon).
+- Send one message to a list of your Telegram chats (channels and groups) from your account (Telethon).
 - Guided `tgcast setup`; `check`, `send --dry-run`, `send`, `status`.
 - Per-chat permission check, exact preview, confirmation before sending.
 - History file: never posts twice to the same chat within the cooldown.

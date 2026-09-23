@@ -4,8 +4,12 @@
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License MIT](https://img.shields.io/badge/license-MIT-green)
 
-**Careful Telegram announcements to your own channels and groups.** You list the chats, write the text, look at a
-preview, and tgcast posts it from your Telegram account - slowly, within limits, and never twice to the same chat.
+**Send one message to a list of your Telegram chats.** tgcast is a mailing tool for chats: you give it a list of
+channels and groups and a text, and it posts that text to each of them from your Telegram account, one by one - with
+safe pauses and limits, and never twice to the same chat.
+
+Typical uses: announcing an event, a release or an offer in all the communities you run; posting the same update to
+several groups you manage; sharing news with partner chats that agreed to receive it.
 
 *[Читать по-русски](README.ru.md)*
 
