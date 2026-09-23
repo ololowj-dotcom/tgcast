@@ -1,0 +1,3 @@
+@my_channel
+https://t.me/my_group
+-1001234567890

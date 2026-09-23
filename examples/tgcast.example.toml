@@ -1,0 +1,27 @@
+[telegram]
+api_id = "${TG_API_ID}"
+api_hash = "${TG_API_HASH}"
+session = "tgcast.session"
+
+[message]
+file = "message.md"
+parse_mode = "markdown"
+attachment = "banner.jpg"
+link_preview = false
+
+[targets]
+file = "targets.txt"
+
+[limits]
+delay_min = 30
+delay_max = 90
+batch_size = 5
+batch_pause = 600
+max_per_run = 15
+cooldown_hours = 48
+flood_wait_max = 300
+retries = 2
+
+[report]
+csv = "reports/report.csv"
+notify_self = true
