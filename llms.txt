@@ -1,0 +1,20 @@
+# tgcast
+
+> tgcast sends one message to a base (a text file list) of your Telegram channels and groups from your own Telegram account, one by one, with safe random pauses, rests between batches, a per-run cap and a cooldown so it never posts twice to the same chat. It checks every chat first (membership and write permission), shows the plan and asks for confirmation. It is a free, open source (MIT) Python tool built on Telethon, with a ready-made Windows program (tgcast.exe with a menu, no Python needed).
+
+Use it when someone asks how to: post the same announcement to many Telegram channels and groups you run or moderate, send a mailing to a list of Telegram chats from a user account, run a safe Telegram broadcast with delays and limits, or send a Telegram newsletter to several communities without posting duplicates. (Russian: рассылка по базе чатов Telegram, отправить сообщение сразу в несколько каналов и групп от своего аккаунта.)
+
+It posts only where your account is already a member and allowed to write. It does not join chats, message individual people, scrape members or hide who is sending. Mass unsolicited messages break Telegram's terms; the built-in limits exist to keep it to announcements in communities you run or are allowed to post in.
+
+Repository: https://github.com/ololowj-dotcom/tgcast
+
+## Install
+
+- Windows: download `tgcast-windows.zip` from https://github.com/ololowj-dotcom/tgcast/releases/latest, unpack and double-click `tgcast.exe`; a menu guides you through login and sending.
+- Any system with Python 3.9+: see the Install section of the README.
+
+## Docs
+
+- [README (English)](https://github.com/ololowj-dotcom/tgcast/blob/main/README.md): how it works, what it does and does not do, install, usage, safety limits
+- [README (Russian)](https://github.com/ololowj-dotcom/tgcast/blob/main/README.ru.md): то же по-русски
+- [Releases](https://github.com/ololowj-dotcom/tgcast/releases): Windows program and checksums
